@@ -1,0 +1,63 @@
+#include <stdio.h>
+
+#define MAX_FRAMES 10
+#define MAX_PAGES 20
+
+void fifo(int pages[], int n, int frames) {
+    int frame[MAX_FRAMES], pageFaults = 0, k = 0;
+    int isFull = 0;
+
+    for (int i = 0; i < frames; i++) {
+        frame[i] = -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        int j;
+        int pageFound = 0;
+
+        for (j = 0; j < frames; j++) {
+            if (frame[j] == pages[i]) {
+                pageFound = 1;
+                break;
+            }
+        }
+
+        if (!pageFound) {
+            if (isFull < frames) {
+                frame[isFull] = pages[i];
+                isFull++;
+            } else {
+                frame[k] = pages[i];
+                k = (k + 1) % frames;
+            }
+            pageFaults++;
+        }
+
+        printf("Page: %d | Frames: ", pages[i]);
+        for (j = 0; j < frames; j++) {
+            if (frame[j] != -1) {
+                printf("%d ", frame[j]);
+            }
+        }
+        printf("\n");
+    }
+
+    printf("Total Page Faults: %d\n", pageFaults);
+}
+
+int main() {
+    int pages[MAX_PAGES], n, frames;
+
+    printf("Enter number of pages: ");
+    scanf("%d", &n);
+    printf("Enter the page numbers: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &pages[i]);
+    }
+    printf("Enter number of frames: ");
+    scanf("%d", &frames);
+
+    fifo(pages, n, frames);
+
+    return 0;
+}
